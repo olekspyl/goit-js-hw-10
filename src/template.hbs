@@ -1,0 +1,9 @@
+<ul class='list'>
+  <div class='template__group'>
+    <li><img src='{{flags.svg}}' alt='flag' width='50px' height='40px' /></li>
+    <li><p class='template__category template__category-name'>{{name.common}}</p></li>
+  </div>
+  <li><p class='template__category'>Capital: <span class='template__undercategory'>{{capital}}</span></p></li>
+  <li><p class='template__category'>Population: <span class='template__undercategory'>{{population}}</span></p></li>
+  <li><p class='template__category'>Languages: {{#each languages}}<span class='template__undercategory'>{{this}}</span>{{/each}}</p></li>
+</ul>
