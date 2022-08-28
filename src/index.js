@@ -3,8 +3,8 @@ import Notiflix from 'notiflix';
 import { fetchCountries } from './fetchCountries';
 import debounce from 'lodash.debounce';
 import templateFunction from './template.hbs';
-import template2Function from './template2.hbs';
-const DEBOUNCE_DELAY = 1000;
+
+const DEBOUNCE_DELAY = 300;
 
 const refs = {
   inputEl: document.querySelector('#search-box'),
@@ -12,40 +12,47 @@ const refs = {
   countryInfoEl: document.querySelector('.country-info'),
   popEl: document.querySelector('#population'),
 };
+
 refs.inputEl.addEventListener('input', debounce(onInputChange, DEBOUNCE_DELAY));
 
 function onInputChange(event) {
   const inputText = event.target.value.trim();
 
   fetchCountries(inputText)
-      .then(country => {
+      .then(countries => {
         
-      function checkMatches() {
-          if (country.length <= 10 && country.length >= 2) {
-            const parsedDataMore = country.map(el => ({
-            ...el,
-                names: Object.values(el.names),
-                flags: Object.values(el.flags),
-          }));
-          refs.countryListEl.innerHTML = template2Function(parsedDataMore[0]);
-        } else if (country.length > 10) {
-          Notiflix.Notify.failure(
-            'Too many matches found. Please enter a more specific name.'
-          );
-        } else if (country.length === 1) {
-            const parsedData = country.map(el => ({
-              ...el,
-              languages: Object.values(el.languages),
+        function checkMatches() {
+        
+          if (countries.length <= 10 && countries.length >= 2) {
+            refs.countryInfoEl.innerHTML = '';
+            const parsedDataMore = countries.map(({ name, flags }) => {
+              return `<ul class='list'>
+               <li class='template__group'><img src="${flags.svg}" alt="flag" width="50px" height="40px"/><p class="template__category">${name.common}</p></li>
+              </ul>`})
+              .join(' ');
+            
+            refs.countryListEl.insertAdjacentHTML('afterbegin', parsedDataMore);
+          }
+          
+          else if (countries.length > 10) {
+          Notiflix.Notify.info('Too many matches found. Please enter a more specific name.')
+          }
+          
+          else {
+            const parsedData = countries.map(country => ({
+              ...country,
+              languages: Object.values(country.languages),
             }));
           refs.countryInfoEl.innerHTML = templateFunction(parsedData[0]);
         }
       }
       checkMatches();
 
-      console.log(country);
+      console.log(countries);
     })
     .catch(error => {
       Notiflix.Notify.failure('Oops, there is no country with that name');
-      console.log(error);
+      return [];
+
     });
 }
