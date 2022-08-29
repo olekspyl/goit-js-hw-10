@@ -22,16 +22,16 @@ function onInputChange(event) {
       .then(countries => {
         
         function checkMatches() {
-        
+        refs.countryListEl.innerHTML = ' ';
           if (countries.length <= 10 && countries.length >= 2) {
-            refs.countryInfoEl.innerHTML = '';
+            
             const parsedDataMore = countries.map(({ name, flags }) => {
               return `<ul class='list'>
                <li class='template__group'><img src="${flags.svg}" alt="flag" width="50px" height="40px"/><p class="template__category">${name.common}</p></li>
               </ul>`})
               .join(' ');
             
-            refs.countryListEl.insertAdjacentHTML('afterbegin', parsedDataMore);
+            refs.countryListEl.innerHTML = parsedDataMore;
           }
           
           else if (countries.length > 10) {
@@ -39,7 +39,9 @@ function onInputChange(event) {
           }
           
           else {
+            refs.countryInfoEl.innerHTML = '';
             const parsedData = countries.map(country => ({
+
               ...country,
               languages: Object.values(country.languages),
             }));
@@ -52,7 +54,7 @@ function onInputChange(event) {
     })
     .catch(error => {
       Notiflix.Notify.failure('Oops, there is no country with that name');
-      return [];
+      
 
     });
 }
